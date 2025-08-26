@@ -68,6 +68,19 @@
             </execution>
         </executions>
         </plugin>
+        
+        <!-- Empaqueta un JAR ejecutable con todas las dependencias (uber-jar) -->
+        <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+            <execution>
+            <goals>
+                <goal>repackage</goal>
+            </goals>
+            </execution>
+        </executions>
+        </plugin>
 
         <!-- Checkstyle -->
         <plugin>
