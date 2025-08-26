@@ -1,7 +1,7 @@
 pipeline {
   agent any
   tools { jdk 'jdk-17'; maven 'maven-3.9' }
-  options { timestamps(); ansiColor('xterm'); disableConcurrentBuilds() }
+  options { timestamps(); disableConcurrentBuilds() }
 
   environment {
     // Jenkins (en contenedor) se conecta al host por host.docker.internal
