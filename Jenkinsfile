@@ -4,15 +4,10 @@ pipeline {
   options { timestamps(); ansiColor('xterm'); disableConcurrentBuilds() }
 
   environment {
-    // Si accedes por localhost:2222 (puerto publicado desde tu contenedor/VM):
-    STAGING_HOST = 'localhost'
+    // Jenkins (en contenedor) se conecta al host por host.docker.internal
+    STAGING_HOST = 'host.docker.internal'
     STAGING_PORT = '2222'
-
-    // Si Jenkins y Staging están en la MISMA red Docker (sin publicar 2222):
-    // STAGING_HOST = 'maven1'
-    // STAGING_PORT = '22'
-
-    APP_DIR = '/opt/springboot/app'
+    APP_DIR      = '/opt/springboot/app'
   }
 
   stages {
@@ -21,16 +16,16 @@ pipeline {
     }
 
     stage('Build & Unit Tests') {
-      steps { sh 'mvn -B -U clean verify' }           // compila + tests
+      steps { sh 'mvn -B -U clean verify' }
       post { always { junit '**/target/surefire-reports/*.xml' } }
     }
 
     stage('Checkstyle') {
-      steps { sh 'mvn -B checkstyle:check' }          // formatea/valida estilo
+      steps { sh 'mvn -B checkstyle:check' }
     }
 
     stage('Coverage (JaCoCo)') {
-      steps { sh 'mvn -B jacoco:report' }             // genera reporte
+      steps { sh 'mvn -B jacoco:report' }
       post {
         success {
           jacoco(
@@ -51,12 +46,12 @@ pipeline {
 
     stage('Deploy to Staging (SSH)') {
       steps {
-        sshagent (credentials: ['staging-ssh']) {     // crea esta credencial en Jenkins
+        sshagent (credentials: ['staging-ssh']) {
           sh '''
             set -euxo pipefail
             JAR=$(cat JAR_PATH.txt)
 
-            # crear directorio remoto
+            # crear directorio remoto si no existe
             ssh -p ${STAGING_PORT} -o StrictHostKeyChecking=no deploy@${STAGING_HOST} "mkdir -p ${APP_DIR}"
 
             # copiar jar
@@ -76,10 +71,8 @@ pipeline {
       steps {
         sh '''
           set -euxo pipefail
-          # Si usas localhost con puerto 8080 publicado:
-          URL="http://localhost:8080/actuator/health"
-          # Si usas red interna y el host se llama maven1, usa:
-          # URL="http://maven1:8080/actuator/health"
+          # Health publicado en el host por el puerto 18080 (mapea al 8080 del contenedor)
+          URL="http://host.docker.internal:18080/actuator/health"
 
           for i in $(seq 1 10); do
             sleep 3
@@ -94,4 +87,3 @@ pipeline {
     }
   }
 }
-
