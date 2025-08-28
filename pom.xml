@@ -1,109 +1,111 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>demo</name>
-    <description>Demo project for Spring Boot</description>
+  <groupId>com.example</groupId>
+  <artifactId>demo</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.13</version>
-        <relativePath/>
-    </parent>
+  <name>demo</name>
+  <description>Demo project for Spring Boot</description>
 
-    <properties>
-        <java.version>11</java.version>
-    </properties>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.13</version>
+    <relativePath/>
+  </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Health endpoint -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+  <properties>
+    <!-- Puedes compilar con JDK 17 en Jenkins; el target del bytecode será 11 -->
+    <java.version>11</java.version>
+  </properties>
 
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 
-    <build>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Health endpoint -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
     <plugins>
-        <!-- Tests -->
-        <plugin>
+      <!-- Tests -->
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
-        </plugin>
+      </plugin>
 
-        <!-- Cobertura JaCoCo -->
-        <plugin>
+      <!-- Cobertura JaCoCo -->
+      <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.12</version>
         <executions>
-            <execution>
+          <execution>
             <goals>
-                <goal>prepare-agent</goal>
+              <goal>prepare-agent</goal>
             </goals>
-            </execution>
-            <execution>
+          </execution>
+          <execution>
             <id>report</id>
             <phase>verify</phase>
             <goals>
-                <goal>report</goal>
+              <goal>report</goal>
             </goals>
-            </execution>
+          </execution>
         </executions>
-        </plugin>
-        
-        <!-- Empaqueta un JAR ejecutable con todas las dependencias (uber-jar) -->
-        <plugin>
+      </plugin>
+
+      <!-- Empaquetado del jar ejecutable -->
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <executions>
-            <execution>
+          <execution>
             <goals>
-                <goal>repackage</goal>
+              <goal>repackage</goal>
             </goals>
-            </execution>
+          </execution>
         </executions>
-        </plugin>
+      </plugin>
 
-        <!-- Checkstyle -->
-        <plugin>
+      <!-- Checkstyle -->
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>3.3.1</version>
+
+        <!-- Fijamos versión del motor de Checkstyle para evitar incompatibilidades -->
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>10.17.0</version>
+          </dependency>
+        </dependencies>
+
         <configuration>
-            <configLocation>google_checks.xml</configLocation>
-            <encoding>UTF-8</encoding>
-            <consoleOutput>true</consoleOutput>
-            <failOnViolation>true</failOnViolation>
+          <!-- Usaremos el checkstyle.xml del proyecto (ver más abajo) -->
+          <configLocation>checkstyle.xml</configLocation>
+          <encoding>UTF-8</encoding>
+          <consoleOutput>true</consoleOutput>
+          <failOnViolation>true</failOnViolation>
         </configuration>
         <executions>
-            <execution>
-            <id>validate</id>
-            <phase>validate</phase>
-            <goals>
-                <goal>check</goal>
-            </goals>
-            </execution>
-        </executions>
-        </plugin>
-    </plugins>
-    </build>
-
-</project>
+          <exec
